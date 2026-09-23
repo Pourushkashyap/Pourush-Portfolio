@@ -64,8 +64,8 @@ export default function Hero() {
               <ArrowRightIcon width={16} height={16} className="transition-transform group-hover:translate-x-1" />
             </button>
             <a
-              href={PROFILE.resumeUrl}
-              download
+              href="/Pourush resume.pdf"
+              download="Pourush-Kashyap-Resume.pdf"
               className="inline-flex items-center gap-2 rounded-full border border-line/20 px-6 py-3 text-[15px] font-medium transition hover:border-accent/60 hover:text-accent"
             >
               Download Resume <DownloadIcon width={16} height={16} />

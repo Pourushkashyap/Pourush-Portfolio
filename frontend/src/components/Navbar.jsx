@@ -59,7 +59,7 @@ export default function Navbar({ route, theme, onToggleTheme, onOpenChat }) {
       />
 
       <div
-        className={`nav-shell relative mx-auto max-w-6xl rounded-2xl backdrop-blur-xl transition-[background-color,box-shadow] duration-500 ${
+        className={`nav-shell relative mx-auto max-w-7xl rounded-2xl backdrop-blur-xl transition-[background-color,box-shadow] duration-500 ${
           menuOpen ? 'bg-bg/95 shadow-xl' : scrolled ? 'bg-bg/80 shadow-[0_10px_40px_-12px_rgb(0_0_0/0.45)]' : 'bg-bg/35'
         }`}
       >
@@ -90,7 +90,7 @@ export default function Navbar({ route, theme, onToggleTheme, onOpenChat }) {
           {/* ---------- Center: navigation ---------- */}
           <nav
             aria-label="Primary"
-            className="relative hidden items-center rounded-full border border-line/10 bg-surface/50 p-1 lg:flex"
+            className="relative hidden items-center rounded-full border border-line/10 bg-surface/50 p-1 xl:flex"
             onMouseLeave={() => setHovered(null)}
           >
             <span
@@ -109,7 +109,7 @@ export default function Navbar({ route, theme, onToggleTheme, onOpenChat }) {
                   onFocus={() => setHovered(l.to)}
                   onBlur={() => setHovered(null)}
                   aria-current={active ? 'page' : undefined}
-                  className={`nav-in relative z-10 rounded-full px-4 py-1.5 text-[13px] font-medium transition-colors ${
+                  className={`nav-in relative z-10 rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-colors ${
                     active ? 'text-fg' : 'text-muted hover:text-fg'
                   }`}
                   style={step(i + 1)}
@@ -160,7 +160,7 @@ export default function Navbar({ route, theme, onToggleTheme, onOpenChat }) {
               onClick={() => setMenuOpen((o) => !o)}
               aria-expanded={menuOpen}
               aria-label="Toggle menu"
-              className="grid h-9 w-9 place-items-center rounded-full border border-line/15 lg:hidden"
+              className="grid h-9 w-9 place-items-center rounded-full border border-line/15 xl:hidden"
             >
               {menuOpen ? <CloseIcon width={16} height={16} /> : <MenuIcon width={16} height={16} />}
             </button>
@@ -169,7 +169,7 @@ export default function Navbar({ route, theme, onToggleTheme, onOpenChat }) {
 
         {/* ---------- Mobile menu ---------- */}
         <div
-          className={`grid overflow-hidden transition-[grid-template-rows,opacity] duration-300 lg:hidden ${
+          className={`grid overflow-hidden transition-[grid-template-rows,opacity] duration-300 xl:hidden ${
             menuOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
           }`}
         >

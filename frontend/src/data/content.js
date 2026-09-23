@@ -11,14 +11,17 @@ export const PROFILE = {
   intro:
     'I build intelligent systems that turn complex problems into production-ready AI applications.',
   stack: ['AI Agents', 'RAG', 'LangGraph', 'MCP', 'Machine Learning', 'Full Stack'],
-  email: 'you@example.com', // TODO: replace with your email
+  email: 'pourushkashyap06@gmail.com',
+  phone: '+91 79863 55170',
+  phoneHref: 'tel:+917986355170',
   resumeUrl: '/resume.pdf', // put resume.pdf in /public
 };
 
 export const SOCIALS = [
-  { id: 'github', label: 'GitHub', href: 'https://github.com/' }, // TODO: your profile URL
-  { id: 'linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/' },
-  { id: 'leetcode', label: 'LeetCode', href: 'https://leetcode.com/' },
+  // TODO: replace the placeholder usernames with your real profile URLs
+  { id: 'github', label: 'GitHub', href: 'https://github.com/Pourushkashyap', display: 'https://github.com/Pourushkashyap' },
+  { id: 'linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/in/pourush-kashyap-68890a289/', display: 'https://www.linkedin.com/in/pourush-kashyap-68890a289/' },
+  { id: 'leetcode', label: 'LeetCode', href: 'https://leetcode.com/u/_pourush2005/', display: 'https://leetcode.com/u/_pourush2005/' },
 ];
 
 export const NAV_LINKS = [
@@ -27,7 +30,8 @@ export const NAV_LINKS = [
   { to: '/projects', label: 'Projects' },
   { to: '/skills', label: 'Skills' },
   { to: '/journey', label: 'Journey' },
-  { to: '/education', label: 'Education' },
+  { to: '/background', label: 'Background' },
+  { to: '/contact', label: 'Contact' },
 ];
 
 // Node 0 in the hero scene is the agent itself; these orbit around it.
@@ -110,6 +114,15 @@ export const PROCESS = [
   { title: 'Evaluate', text: 'Measure quality with evals, not guesswork.' },
   { title: 'Test', text: 'Unit, integration and regression checks.' },
   { title: 'Deploy', text: 'Ship, monitor and keep iterating.' },
+];
+
+export const ASSISTANT_PROMPTS_CONTACT = [
+  'What projects has Pourush built?',
+  'Tell me about AgentForge.',
+  'What are his AI/ML skills?',
+  'Tell me about his internship experience.',
+  'What technologies does he work with?',
+  'Why should I consider him for an AI/ML internship?',
 ];
 
 export const ASSISTANT_PROMPTS = [

@@ -48,3 +48,13 @@ export const CodeIcon = (p) => (
 );
 
 export const SOCIAL_ICONS = { github: GithubIcon, linkedin: LinkedinIcon, leetcode: CodeIcon };
+
+export const MailIcon = (p) => (<svg {...base} {...p}><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>);
+export const PhoneIcon = (p) => (<svg {...base} {...p}><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z" /></svg>);
+export const PinIcon = (p) => (<svg {...base} {...p}><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Z" /><circle cx="12" cy="10" r="2.5" /></svg>);
+export const AgentIcon = (p) => (<svg {...base} {...p}><circle cx="12" cy="12" r="3" /><circle cx="5" cy="5" r="1.8" /><circle cx="19" cy="6" r="1.8" /><circle cx="18" cy="19" r="1.8" /><circle cx="6" cy="18" r="1.8" /><path d="m6.3 6.3 3.6 3.6M17.6 7.5l-3.5 3M16.7 17.6l-3.2-3.2M7.4 16.7l2.5-2.5" /></svg>);
+export const LayersIcon = (p) => (<svg {...base} {...p}><path d="m12 3 9 5-9 5-9-5 9-5ZM3 13l9 5 9-5M3 17.5l9 5 9-5" /></svg>);
+export const ChartIcon = (p) => (<svg {...base} {...p}><path d="M4 20V4M4 20h16M8 16v-4M12 16V8M16 16v-6" /></svg>);
+export const StackIcon = (p) => (<svg {...base} {...p}><rect x="3" y="4" width="18" height="6" rx="1.5" /><rect x="3" y="14" width="18" height="6" rx="1.5" /><path d="M7 7h.01M7 17h.01" /></svg>);
+export const CheckIcon = (p) => (<svg {...base} {...p}><path d="m5 12 5 5 9-10" /></svg>);
+export const ChatIcon = (p) => (<svg {...base} {...p}><path d="M4 5h16v11H9l-5 4V5Z" /></svg>);

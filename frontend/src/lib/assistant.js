@@ -14,6 +14,26 @@
 
 const KB = [
   {
+    keys: ['why', 'consider', 'strength', 'good fit'],
+    answer:
+      'Pourush combines AI/ML depth (RAG, LangGraph, MCP, ML/DL) with real full-stack engineering (React, FastAPI, Node.js, Docker). He has built end-to-end systems such as AgentForge and the Self-Healing Debugger, and he is strong at problem solving with 850+ LeetCode problems.',
+  },
+  {
+    keys: ['internship', 'experience', 'solitaire', 'training'],
+    answer:
+      'Pourush completed practical training / an internship at Solitaire Infosys focused on web and software development, applying React, JavaScript, Node.js and MongoDB in real project workflows.',
+  },
+  {
+    keys: ['education', 'university', 'cgpa', 'study', 'degree', 'college'],
+    answer:
+      'Pourush is pursuing a B.Tech in Computer Science & Engineering at CT University (CSE \'27) with a CGPA of 9.2.',
+  },
+  {
+    keys: ['award', 'hackathon', 'achievement', 'code crafter'],
+    answer:
+      'Pourush won the Best Startup Award at Code Crafter 2.0, has solved 850+ LeetCode problems, and served as a Coordinator for Udaan at CT University.',
+  },
+  {
     keys: ['agentforge', 'agent forge', 'website builder'],
     answer:
       'AgentForge is an autonomous AI website builder. It converts natural-language requirements into structured, deployable web applications using specialized AI agents.',
@@ -41,6 +61,11 @@ const KB = [
     keys: ['hire', 'contact', 'opportunit', 'available', 'job', 'intern'],
     answer:
       "Pourush is open to AI/ML opportunities. Use the “Get in Touch” button at the bottom of the page to reach him.",
+  },
+  {
+    keys: ['project', 'built', 'made'],
+    answer:
+      'Major projects: AgentForge (autonomous AI website builder), the Self-Healing Debugger, and FinGrow (AI-enabled P2P lending platform). Also FitGenius AI, Crime Scene Detection (YOLOv8) and SilentSOS, plus several full-stack apps.',
   },
   {
     keys: ['who', 'about', 'pourush', 'yourself', 'introduce'],

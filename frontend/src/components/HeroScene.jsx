@@ -1,95 +1,34 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CORE_NODE, ORBIT_NODES } from '../data/content';
+import { icosphere, LIGHT, makeGlow, readColors, rgba, rotate } from '../lib/scene3d';
 
 /* -----------------------------------------------------------------------------
-   Agent network — a dependency-free 3D scene drawn on <canvas>.
+   Orbit scene — a faceted "agent" core with nodes orbiting it, drawn on <canvas>.
+   Used on the Home hero, and (with different props) on Projects, Skills, Journey.
 
-   • Faceted "glass" core (the agent) with six orbiting nodes
-   • Data particles hop from node to node along the graph edges
-   • Slow auto-rotation, mouse parallax, hover-to-inspect labels
-   • Reads its colours from the CSS variables, so it follows the theme toggle
-
-   It is plain 3D maths (rotate -> perspective project -> painter's algorithm),
-   so there is no three.js bundle to ship. If you later want react-three-fiber,
-   this component is the only thing to swap out.
+   Props: core, nodes, className, hint, onSelect(index, node), selected (node name)
 ----------------------------------------------------------------------------- */
 
-const LABELS = [CORE_NODE, ...ORBIT_NODES]; // index 0 = core, 1..n = orbit nodes
-const CAM = 4.0; // camera distance in world units
-const ORBIT_R = 1.2; // radius of the node orbit
-const LIGHT = normalize([-0.45, 0.6, 0.66]);
+const CAM = 4.0;
+const ORBIT_R = 1.2;
 
-function normalize(v) {
-  const l = Math.hypot(v[0], v[1], v[2]) || 1;
-  return [v[0] / l, v[1] / l, v[2] / l];
-}
-
-function rotate(p, yaw, pitch) {
-  const cy = Math.cos(yaw), sy = Math.sin(yaw);
-  const x = p[0] * cy + p[2] * sy;
-  const z1 = -p[0] * sy + p[2] * cy;
-  const cx = Math.cos(pitch), sx = Math.sin(pitch);
-  return [x, p[1] * cx - z1 * sx, p[1] * sx + z1 * cx];
-}
-
-function icosphere(detail) {
-  const t = (1 + Math.sqrt(5)) / 2;
-  const verts = [
-    [-1, t, 0], [1, t, 0], [-1, -t, 0], [1, -t, 0],
-    [0, -1, t], [0, 1, t], [0, -1, -t], [0, 1, -t],
-    [t, 0, -1], [t, 0, 1], [-t, 0, -1], [-t, 0, 1],
-  ].map(normalize);
-  let faces = [
-    [0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11],
-    [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 8],
-    [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9],
-    [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1],
-  ];
-  for (let d = 0; d < detail; d++) {
-    const cache = new Map();
-    const next = [];
-    const mid = (a, b) => {
-      const key = a < b ? `${a}_${b}` : `${b}_${a}`;
-      if (cache.has(key)) return cache.get(key);
-      verts.push(normalize([
-        (verts[a][0] + verts[b][0]) / 2,
-        (verts[a][1] + verts[b][1]) / 2,
-        (verts[a][2] + verts[b][2]) / 2,
-      ]));
-      cache.set(key, verts.length - 1);
-      return verts.length - 1;
-    };
-    faces.forEach(([a, b, c]) => {
-      const ab = mid(a, b), bc = mid(b, c), ca = mid(c, a);
-      next.push([a, ab, ca], [b, bc, ab], [c, ca, bc], [ab, bc, ca]);
-    });
-    faces = next;
-  }
-  return { verts, faces };
-}
-
-function readColors() {
-  const s = getComputedStyle(document.documentElement);
-  const get = (name) => s.getPropertyValue(name).trim().split(/\s+/).map(Number);
-  return { accent: get('--accent'), fg: get('--fg'), bg: get('--bg') };
-}
-const rgba = (c, a) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
-
-function makeGlow(c) {
-  const size = 128;
-  const cv = document.createElement('canvas');
-  cv.width = cv.height = size;
-  const g = cv.getContext('2d');
-  const grad = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-  grad.addColorStop(0, rgba(c, 1));
-  grad.addColorStop(0.35, rgba(c, 0.32));
-  grad.addColorStop(1, rgba(c, 0));
-  g.fillStyle = grad;
-  g.fillRect(0, 0, size, size);
-  return cv;
-}
-
-export default function HeroScene() {
+export default function HeroScene({
+  core = CORE_NODE,
+  nodes = ORBIT_NODES,
+  className = 'h-[420px] sm:h-[520px] lg:h-[620px]',
+  hint = 'Hover a node',
+  onSelect,
+  selected,
+  ariaLabel,
+}) {
+  const LABELS = [core, ...nodes];
+  const selectedRef = useRef(null);
+  selectedRef.current = selected ? LABELS.findIndex((l) => l.name === selected) : null;
+  const onSelectRef = useRef(onSelect);
+  onSelectRef.current = onSelect;
+  const nodesRef = useRef(nodes);
+  const LABELS_REF = useRef(LABELS);
+  LABELS_REF.current = LABELS;
   const wrapRef = useRef(null);
   const canvasRef = useRef(null);
   const labelRefs = useRef([]);
@@ -109,12 +48,12 @@ export default function HeroScene() {
     if (!ctx) return undefined;
 
     const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    const n = ORBIT_NODES.length;
+    const n = nodesRef.current.length;
 
     // Static geometry ------------------------------------------------------
     const core = icosphere(1);
     const small = icosphere(0);
-    const base = ORBIT_NODES.map((_, i) => {
+    const base = nodesRef.current.map((_, i) => {
       const y = n > 1 ? (i / (n - 1)) * 1.4 - 0.7 : 0;
       const r = Math.sqrt(1 - y * y);
       const th = i * 2.4 + 0.6;
@@ -203,7 +142,7 @@ export default function HeroScene() {
       if (!visible || document.hidden || !W) { last = now; return; }
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
-      const hov = activeRef.current;
+      const hov = activeRef.current ?? (selectedRef.current > 0 ? selectedRef.current : null);
 
       speed += ((hov == null ? 1 : 0.1) - speed) * Math.min(1, dt * 4);
       if (!reduced) { time += dt; yaw += dt * 0.28 * speed; }
@@ -335,6 +274,7 @@ export default function HeroScene() {
       hover(best);
     };
     const onLeave = () => { tmx = 0; tmy = 0; hover(null); };
+    const onClick = () => { const h = activeRef.current; if (h != null && onSelectRef.current) onSelectRef.current(h, LABELS_REF.current[h]); };
 
     const ro = new ResizeObserver(resize);
     ro.observe(wrap);
@@ -343,6 +283,7 @@ export default function HeroScene() {
     io.observe(wrap);
     wrap.addEventListener('pointermove', onMove);
     wrap.addEventListener('pointerleave', onLeave);
+    wrap.addEventListener('click', onClick);
 
     // theme changes -> recolour
     const mo = new MutationObserver(() => {
@@ -358,15 +299,16 @@ export default function HeroScene() {
       ro.disconnect(); io.disconnect(); mo.disconnect();
       wrap.removeEventListener('pointermove', onMove);
       wrap.removeEventListener('pointerleave', onLeave);
+      wrap.removeEventListener('click', onClick);
     };
   }, [hover]);
 
   return (
     <div
       ref={wrapRef}
-      className="relative h-[420px] w-full select-none sm:h-[520px] lg:h-[620px]"
+      className={`relative w-full select-none ${className}`}
       role="img"
-      aria-label="Animated 3D network: an AI agent connected to LangGraph, RAG, MCP, AI Agents, LLMs and Python"
+      aria-label={ariaLabel || `Animated 3D network: ${LABELS.map((l) => l.name).join(', ')}`}
     >
       <canvas ref={canvasRef} className="absolute inset-0" />
       <div className="pointer-events-none absolute inset-0">
@@ -384,6 +326,7 @@ export default function HeroScene() {
               type="button"
               onFocus={() => hover(i)}
               onBlur={() => hover(null)}
+              onClick={() => onSelect && onSelect(i, l)}
               className={`whitespace-nowrap rounded-full border px-2.5 py-1 font-mono text-[11px] backdrop-blur transition-colors ${
                 i === 0
                   ? 'border-accent/50 bg-accent/15 text-accent'
@@ -406,7 +349,7 @@ export default function HeroScene() {
         ))}
       </div>
       <p className="pointer-events-none absolute bottom-1 right-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted/70">
-        Hover a node
+        {hint}
       </p>
     </div>
   );
