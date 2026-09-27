@@ -10,16 +10,16 @@ export const SYSTEM_TYPES = [
 ];
 
 export const PROJECTS = [
-  { slug: 'agentforge', tier: 1, name: 'AgentForge', sub: 'Autonomous AI Website Builder', cats: ['Agentic AI', 'Generative AI'], tags: ['LangGraph', 'LLM', 'Docker'], viz: 'agents', text: 'Turns a plain-language idea into a planned, generated, tested and deployed web app using specialized agents.',Github:'' },
-  { slug: 'self-healing-debugger', tier: 1, name: 'Self-Healing Debugger', sub: 'Autonomous debugging and self-recovery', cats: ['Agentic AI'], tags: ['LangGraph', 'FastAPI', 'Docker', 'AST', 'Agents'], viz: 'loop', text: 'Detects errors, finds root causes, generates fixes, tests them in a sandbox and validates regressions.',Github:'https://github.com/Pourushkashyap/Self-healing-Debugger' },
-  { slug: 'fingrow', tier: 1, name: 'FinGrow', sub: 'AI-enabled peer-to-peer lending platform', cats: ['Full Stack', 'Machine Learning'], tags: ['React', 'Node', 'MongoDB', 'AI/ML'], viz: 'finance', text: 'Full-stack financial platform for peer-to-peer lending workflows with intelligent decision support.',Github:'https://github.com/Pourushkashyap/FinGrow' },
-  { slug: 'fitgenius', tier: 2, name: 'FitGenius AI', sub: 'Personalised diet & workout recommendations', cats: ['Machine Learning', 'Full Stack'], tags: ['Python', 'Scikit-learn', 'Flask', 'React'], viz: 'pipeline', text: 'ML recommendation system that turns user data into tailored diet and workout plans.',Github:'https://github.com/Pourushkashyap/FitGenius-AI' },
-  { slug: 'CodePilot-AI', tier: 2, name: 'CodePilot AI', sub: 'Computer vision for crime-scene analysis', cats: ['Machine Learning'], tags: ['YOLOv8', 'Flask', 'React', 'Computer Vision'], viz: 'vision', text: 'Object detection pipeline that identifies relevant items in crime-scene imagery.',Github:'https://github.com/Pourushkashyap/CodePilot-AI' },
-  { slug: 'silentsos', tier: 2, name: 'SilentSOS', sub: 'Voice-based intelligent safety system', cats: ['Machine Learning', 'Full Stack'], tags: ['React Native', 'Python', 'MFCC', 'ML'], viz: 'audio', text: 'Mobile safety app that analyses voice features to trigger help when it matters.',Github:'https://github.com/Pourushkashyap/SilentSOS' },
-  // { slug: 'instagram-clone', tier: 3, name: 'Instagram Clone', sub: 'Full-stack social app', cats: ['Full Stack'], tags: ['Full Stack'], viz: 'app' },
-  // { slug: 'swiggy-clone', tier: 3, name: 'Swiggy Clone', sub: 'Food-ordering app', cats: ['Full Stack'], tags: ['Full Stack'], viz: 'app' },
-  // { slug: 'netflix-clone', tier: 3, name: 'Netflix Clone', sub: 'Streaming UI', cats: ['Full Stack'], tags: ['Full Stack'], viz: 'app' },
-  // { slug: 'portfolio', tier: 3, name: 'Portfolio', sub: 'This site — React, Tailwind, 3D', cats: ['Full Stack'], tags: ['React', 'Tailwind'], viz: 'app' },
+  { slug: 'agentforge', tier: 1, name: 'AgentForge', sub: 'Autonomous AI Website Builder', cats: ['Agentic AI', 'Generative AI'], tags: ['LangGraph', 'LLM', 'Docker'], viz: 'agents', text: 'Turns a plain-language idea into a planned, generated, tested and deployed web app using specialized agents.' },
+  { slug: 'self-healing-debugger', tier: 1, name: 'Self-Healing Debugger', sub: 'Autonomous debugging and self-recovery', cats: ['Agentic AI'], tags: ['LangGraph', 'FastAPI', 'Docker', 'AST', 'Agents'], viz: 'loop', text: 'Detects errors, finds root causes, generates fixes, tests them in a sandbox and validates regressions.' },
+  { slug: 'fingrow', tier: 1, name: 'FinGrow', sub: 'AI-enabled peer-to-peer lending platform', cats: ['Full Stack', 'Machine Learning'], tags: ['React', 'Node', 'MongoDB', 'AI/ML'], viz: 'finance', text: 'Full-stack financial platform for peer-to-peer lending workflows with intelligent decision support.' },
+  { slug: 'fitgenius', tier: 2, name: 'FitGenius AI', sub: 'Personalised diet & workout recommendations', cats: ['Machine Learning', 'Full Stack'], tags: ['Python', 'Scikit-learn', 'Flask', 'React'], viz: 'pipeline', text: 'ML recommendation system that turns user data into tailored diet and workout plans.' },
+  { slug: 'crime-scene-detection', tier: 2, name: 'Crime Scene Detection', sub: 'Computer vision for crime-scene analysis', cats: ['Machine Learning'], tags: ['YOLOv8', 'Flask', 'React', 'Computer Vision'], viz: 'vision', text: 'Object detection pipeline that identifies relevant items in crime-scene imagery.' },
+  { slug: 'silentsos', tier: 2, name: 'SilentSOS', sub: 'Voice-based intelligent safety system', cats: ['Machine Learning', 'Full Stack'], tags: ['React Native', 'Python', 'MFCC', 'ML'], viz: 'audio', text: 'Mobile safety app that analyses voice features to trigger help when it matters.' },
+  { slug: 'instagram-clone', tier: 3, name: 'Instagram Clone', sub: 'Full-stack social app', cats: ['Full Stack'], tags: ['Full Stack'], viz: 'app' },
+  { slug: 'swiggy-clone', tier: 3, name: 'Swiggy Clone', sub: 'Food-ordering app', cats: ['Full Stack'], tags: ['Full Stack'], viz: 'app' },
+  { slug: 'netflix-clone', tier: 3, name: 'Netflix Clone', sub: 'Streaming UI', cats: ['Full Stack'], tags: ['Full Stack'], viz: 'app' },
+  { slug: 'portfolio', tier: 3, name: 'Portfolio', sub: 'This site — React, Tailwind, 3D', cats: ['Full Stack'], tags: ['React', 'Tailwind'], viz: 'app' },
 ];
 
 /* ------------------------------ AgentForge ------------------------------ */

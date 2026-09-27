@@ -216,7 +216,7 @@ export default function Skills() {
       <Proficiency />
       <PageCTA title="Looking for someone who can" accent="build with AI?" text="Let’s talk about what I can contribute to your next AI/ML or software engineering project.">
         <LinkBtn href="#/projects">View Projects</LinkBtn>
-        <a href="/Pourush resume.pdf" download className="inline-flex items-center gap-2 rounded-full border border-line/20 px-6 py-3 text-[15px] font-medium transition hover:border-accent/60 hover:text-accent">Download Resume</a>
+        <a href={PROFILE.resumeUrl} download className="inline-flex items-center gap-2 rounded-full border border-line/20 px-6 py-3 text-[15px] font-medium transition hover:border-accent/60 hover:text-accent">Download Resume</a>
       </PageCTA>
     </>
   );

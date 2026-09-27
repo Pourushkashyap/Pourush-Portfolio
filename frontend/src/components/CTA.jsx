@@ -18,7 +18,7 @@ export default function CTA() {
             </p>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
               <a
-                href={`mailto:${PROFILE.email}`}
+                href="#/contact"
                 className="group inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-[15px] font-semibold text-accent-ink transition hover:brightness-110"
               >
                 Get in Touch

@@ -28,7 +28,7 @@ export const SECTIONS = [
     id: 'ml', n: '04', title: 'Machine Learning &', accent: 'Deep Learning',
     groups: [
       { title: 'Machine Learning', items: ['Supervised Learning', 'Unsupervised Learning', 'Regression', 'Classification', 'Feature Engineering', 'Model Evaluation', 'Data Preprocessing'] },
-      { title: 'Deep Learning', items: ['Neural Networks', 'CNN', 'RNN', 'LSTM','GRU', 'Transfer Learning', 'Model Training'] },
+      { title: 'Deep Learning', items: ['Neural Networks', 'CNN', 'RNN', 'LSTM', 'Transfer Learning', 'Model Training'] },
       { title: 'Libraries', items: ['Python', 'NumPy', 'Pandas', 'Scikit-learn', 'TensorFlow', 'Matplotlib'] },
     ],
   },

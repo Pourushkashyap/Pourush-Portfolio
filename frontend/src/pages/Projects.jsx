@@ -107,7 +107,7 @@ function ProjectCard({ p, n }) {
         <TagList items={p.tags} className="mt-4" />
         <div className="mt-5 flex items-center justify-between border-t border-line/10 pt-4 text-[13.5px] font-medium">
           <a href={`#/projects/${p.slug}`} className="inline-flex items-center gap-1.5 transition hover:text-accent">Case Study <ArrowRightIcon width={14} height={14} /></a>
-          <a href={p.Github} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-muted transition hover:text-accent">GitHub <ArrowUpRightIcon width={14} height={14} /></a>
+          <a href={GITHUB} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-muted transition hover:text-accent">GitHub <ArrowUpRightIcon width={14} height={14} /></a>
         </div>
       </div>
     </article>
@@ -228,7 +228,7 @@ function Highlights() {
 
 function Metrics() {
   const items = [
-    [<CountUp key="a" to={950} suffix="+" />, 'LeetCode problems'],
+    [<CountUp key="a" to={850} suffix="+" />, 'LeetCode problems'],
     [<CountUp key="b" to={6} />, 'AI & ML systems built'],
     ['AI / ML', 'Primary focus'],
     ['Agentic AI', 'Current focus'],

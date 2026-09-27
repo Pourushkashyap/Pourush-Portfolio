@@ -20,8 +20,8 @@ export const PROFILE = {
 export const SOCIALS = [
   // TODO: replace the placeholder usernames with your real profile URLs
   { id: 'github', label: 'GitHub', href: 'https://github.com/Pourushkashyap', display: 'https://github.com/Pourushkashyap' },
-  { id: 'linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/in/pourush-kashyap-68890a289/', display: 'https://www.linkedin.com/in/pourush-kashyap-68890a289/' },
-  { id: 'leetcode', label: 'LeetCode', href: 'https://leetcode.com/u/_pourush2005/', display: 'https://leetcode.com/u/_pourush2005/' },
+  { id: 'linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/in/pourush-kashyap-68890a289/', display: 'linkedin.com/in/pourush-kashyap-68890a289/' },
+  { id: 'leetcode', label: 'LeetCode', href: 'https://leetcode.com/u/_pourush2005/', display: 'leetcode.com/u/_pourush2005/' },
 ];
 
 export const NAV_LINKS = [
@@ -101,7 +101,7 @@ export const FEATURED_PROJECTS = [
 ];
 
 export const SNAPSHOT = [
-  { value: 850, suffix: '+', label: 'LeetCode problems', sub: 'Data structures & algorithms' },
+  { value: 950, suffix: '+', label: 'LeetCode problems', sub: 'Data structures & algorithms' },
   { text: 'AI / ML', label: 'Core focus', sub: 'Generative AI · LLMs · ML' },
   { text: 'Agentic AI', label: 'Specialisation', sub: 'LangGraph · MCP' },
   { text: 'Full Stack', label: 'Product engineering', sub: 'React · Python · Node' },

@@ -9,6 +9,9 @@ import About from './pages/About';
 import Projects from './pages/Projects';
 import Skills from './pages/Skills';
 import Journey from './pages/Journey';
+import Background from './pages/Background';
+import Contact from './pages/Contact';
+import CaseStudy from './pages/CaseStudy';
 import Placeholder from './pages/Placeholder';
 
 const PAGES = {
@@ -17,6 +20,8 @@ const PAGES = {
   '/projects': Projects,
   '/skills': Skills,
   '/journey': Journey,
+  '/background': Background,
+  '/contact': Contact,
 };
 
 export default function App() {
@@ -31,11 +36,14 @@ export default function App() {
   const closeChat = useCallback(() => setChat((c) => ({ ...c, open: false })), []);
 
   const Page = PAGES[route];
+  const caseSlug = !Page && route.startsWith('/projects/') ? route.slice('/projects/'.length) : null;
 
   return (
     <>
-      <Navbar route={route} theme={theme} onToggleTheme={toggleTheme} onOpenChat={() => openChat()} />
-      <main>{Page ? <Page onOpenChat={openChat} /> : <Placeholder route={route} />}</main>
+      <Navbar route={caseSlug ? '/projects' : route} theme={theme} onToggleTheme={toggleTheme} onOpenChat={() => openChat()} />
+      <main>
+        {Page ? <Page onOpenChat={openChat} /> : caseSlug ? <CaseStudy slug={caseSlug} /> : <Placeholder route={route} />}
+      </main>
       <Footer />
       <ChatDrawer open={chat.open} prompt={chat.prompt} nonce={chat.nonce} onClose={closeChat} />
     </>
