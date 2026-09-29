@@ -23,7 +23,24 @@ export default function ChatDrawer({ open, prompt, nonce, onClose }) {
     setBusy(true);
     try {
       const answer = await askAssistant(text);
-      setMessages((m) => [...m, { role: 'assistant', text: answer }]);
+
+      setMessages((m) => [
+        ...m,
+        {
+          role: 'assistant',
+          text: answer,
+        },
+      ]);
+    } catch (error) {
+      console.error('Assistant API error:', error);
+
+      setMessages((m) => [
+        ...m,
+        {
+          role: 'assistant',
+          text: 'Sorry, I could not connect to the AI assistant right now.',
+        },
+      ]);
     } finally {
       setBusy(false);
     }

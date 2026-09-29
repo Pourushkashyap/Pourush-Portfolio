@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { AGENTFORGE, CATEGORIES, DEBUGGER, FINGROW, FITGENIUS, HIGHLIGHTS, LAB, PROJECTS, SYSTEM_TYPES } from '../data/projects';
+import { AGENTFORGE, CATEGORIES, CODEPILOT, DEBUGGER, FINGROW, FITGENIUS, HIGHLIGHTS, LAB, PROJECTS, SYSTEM_TYPES } from '../data/projects';
 import { SOCIALS } from '../data/content';
 import GraphScene from '../components/GraphScene';
 import HeroScene from '../components/HeroScene';
@@ -177,9 +177,10 @@ function Visuals() {
   return (
     <Section id="visuals" label="06 / Project visuals" title="Inside the" accent="systems" intro="Each major project gets its own visual language.">
       <div className="grid gap-5 lg:grid-cols-3">
-        {panel('Self-Healing Debugger', 'Error → analyze → fix → sandbox → test → recover', DEBUGGER, { wrap: 'lg:col-span-3', particles: 26 }, 'h-[340px] sm:h-[400px]')}
+        {panel('CodePilot AI', 'Question → guardrails → cache → route → retrieve/context → answer → validate', CODEPILOT, { wrap: 'lg:col-span-3', particles: 30 }, 'h-[340px] sm:h-[400px]')}
+        {panel('Self-Healing Debugger', 'Error → analyze → fix → sandbox → test → recover', DEBUGGER, { wrap: 'lg:col-span-1' })}
         {panel('FinGrow', 'Borrower → risk → loan → investor', FINGROW, { wrap: 'lg:col-span-1' })}
-        {panel('FitGenius AI', 'User data → features → model → recommendation', FITGENIUS, { wrap: 'lg:col-span-2' })}
+        {panel('FitGenius AI', 'User data → features → model → recommendation', FITGENIUS, { wrap: 'lg:col-span-1' })}
       </div>
     </Section>
   );
@@ -228,7 +229,7 @@ function Highlights() {
 
 function Metrics() {
   const items = [
-    [<CountUp key="a" to={850} suffix="+" />, 'LeetCode problems'],
+    [<CountUp key="a" to={950} suffix="+" />, 'LeetCode problems'],
     [<CountUp key="b" to={6} />, 'AI & ML systems built'],
     ['AI / ML', 'Primary focus'],
     ['Agentic AI', 'Current focus'],

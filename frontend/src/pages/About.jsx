@@ -64,7 +64,7 @@ function AboutHero() {
         <LinkBtn onClick={() => go('who')}>My story</LinkBtn>
         <LinkBtn href="#/projects" ghost>See the work</LinkBtn>
       </div>
-      <div className="hero-in relative mt-8 sm:mt-12" style={{ '--d': '600ms' }}>
+      {/* <div className="hero-in relative mt-8 sm:mt-12" style={{ '--d': '600ms' }}>
         <div className="relative overflow-hidden rounded-3xl border border-line/10 bg-surface/30">
           <GraphScene
             nodes={net.nodes} edges={net.edges} labels={false}
@@ -77,7 +77,7 @@ function AboutHero() {
             <span>Systems</span>
           </div>
         </div>
-      </div>
+      </div> */}
     </PageHero>
   );
 }

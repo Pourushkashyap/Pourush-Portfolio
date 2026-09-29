@@ -78,24 +78,46 @@ function Education() {
 function ExperienceCard() {
   const [open, setOpen] = useState(false);
   const d = EXPERIENCE.detail;
+
   return (
     <Reveal>
-      <div className="overflow-hidden rounded-2xl border border-accent/25 bg-gradient-to-b from-accent/[0.06] to-transparent">
+      <div className="rounded-2xl border border-accent/25 bg-gradient-to-b from-accent/[0.06] to-transparent overflow-hidden">
+        {/* Main card content */}
         <div className="p-7 sm:p-9">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="text-xl font-semibold tracking-tight">{EXPERIENCE.company}</p>
-              <p className="mt-1 text-[14.5px] text-accent">{EXPERIENCE.role}</p>
+              <p className="text-xl font-semibold tracking-tight">
+                {EXPERIENCE.company}
+              </p>
+
+              <p className="mt-1 text-[14.5px] text-accent">
+                {EXPERIENCE.role}
+              </p>
             </div>
-            <span className="rounded-full border border-line/15 px-3 py-1 font-mono text-[11px] text-muted">{EXPERIENCE.date}</span>
+
+            <span className="rounded-full border border-line/15 px-3 py-1 font-mono text-[11px] text-muted">
+              {EXPERIENCE.date}
+            </span>
           </div>
-          <p className="mt-4 font-mono text-[12px] uppercase tracking-[0.14em] text-muted">{EXPERIENCE.focus}</p>
+
+          <p className="mt-4 font-mono text-[12px] uppercase tracking-[0.14em] text-muted">
+            {EXPERIENCE.focus}
+          </p>
+
           <ul className="mt-5 space-y-2.5 border-t border-line/10 pt-5">
             {EXPERIENCE.points.map((p) => (
-              <li key={p} className="flex gap-3 text-[14.5px] leading-relaxed text-muted"><span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-accent" />{p}</li>
+              <li
+                key={p}
+                className="flex gap-3 text-[14.5px] leading-relaxed text-muted"
+              >
+                <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-accent" />
+                {p}
+              </li>
             ))}
           </ul>
+
           <TagList items={EXPERIENCE.tech} className="mt-5" />
+
           <button
             type="button"
             onClick={() => setOpen((o) => !o)}
@@ -103,30 +125,87 @@ function ExperienceCard() {
             className="mt-6 inline-flex items-center gap-2 text-[14px] font-medium transition hover:text-accent"
           >
             {open ? 'Hide details' : 'View Experience'}
-            <ArrowRightIcon width={15} height={15} className={`transition-transform ${open ? 'rotate-90' : ''}`} />
+
+            <ArrowRightIcon
+              width={15}
+              height={15}
+              className={`transition-transform duration-300 ${
+                open ? 'rotate-90' : ''
+              }`}
+            />
           </button>
         </div>
-        <div className={`grid overflow-hidden transition-[grid-template-rows] duration-500 ease-out ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-          <div className="min-h-0 border-t border-line/10 bg-bg/30 p-7 sm:p-9">
+
+        {/* Expandable details */}
+        <div
+          className={`overflow-hidden transition-[max-height,opacity] duration-500 ease-out ${
+            open
+              ? 'max-h-[1000px] opacity-100'
+              : 'max-h-0 opacity-0'
+          }`}
+        >
+          <div className="border-t border-line/10 bg-bg/30 p-7 sm:p-9">
             <div className="grid gap-6 sm:grid-cols-2">
+
+              {/* Left column */}
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent">Role</p>
-                <p className="mt-1.5 text-[14.5px]">{d.role}</p>
-                <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-accent">Duration</p>
-                <p className="mt-1.5 text-[14.5px]">{d.duration}</p>
-                <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-accent">What I learned</p>
-                <p className="mt-1.5 text-[14.5px] leading-relaxed text-muted">{d.learned}</p>
+                <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent">
+                  Role
+                </p>
+
+                <p className="mt-1.5 text-[14.5px]">
+                  {d.role}
+                </p>
+
+                <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-accent">
+                  Duration
+                </p>
+
+                <p className="mt-1.5 text-[14.5px]">
+                  {d.duration}
+                </p>
+
+                <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-accent">
+                  What I learned
+                </p>
+
+                <p className="mt-1.5 text-[14.5px] leading-relaxed text-muted">
+                  {d.learned}
+                </p>
               </div>
+
+              {/* Right column */}
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent">Responsibilities</p>
+                <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent">
+                  Responsibilities
+                </p>
+
                 <ul className="mt-1.5 space-y-1.5">
                   {d.responsibilities.map((r) => (
-                    <li key={r} className="flex gap-2.5 text-[13.5px] leading-relaxed text-muted"><CheckIcon width={14} height={14} className="mt-0.5 shrink-0 text-accent" />{r}</li>
+                    <li
+                      key={r}
+                      className="flex gap-2.5 text-[13.5px] leading-relaxed text-muted"
+                    >
+                      <CheckIcon
+                        width={14}
+                        height={14}
+                        className="mt-0.5 shrink-0 text-accent"
+                      />
+                      {r}
+                    </li>
                   ))}
                 </ul>
-                <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-accent">Technologies</p>
-                <TagList items={d.technologies} className="mt-1.5" />
+
+                <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-accent">
+                  Technologies
+                </p>
+
+                <TagList
+                  items={d.technologies}
+                  className="mt-1.5"
+                />
               </div>
+
             </div>
           </div>
         </div>
@@ -208,7 +287,7 @@ function Certifications() {
 /* ------------------------------ 05 · Achievements ----------------------------- */
 function Achievements() {
   return (
-    <Section id="achievements" label="04 / Achievements" title="Achievements">
+    <Section id="achievements" label="03 / Achievements" title="Achievements">
       <Reveal>
         <div className="relative">
           <div className="draw-line in absolute left-0 right-0 top-[15px] hidden h-px bg-line/20 sm:block" aria-hidden />
@@ -255,7 +334,7 @@ function ProblemSolving() {
 /* ------------------------- 07 · Academic highlights ------------------------- */
 function BuiltAlong() {
   return (
-    <Section id="built-along" label="06 / What I’ve built along the way" title="What I’ve built" accent="along the way">
+    <Section id="built-along" label="04 / What I’ve built along the way" title="What I’ve built" accent="along the way">
       <Reveal>
         <ol className="grid gap-px overflow-hidden rounded-2xl border border-line/12 bg-line/12 sm:grid-cols-3 lg:grid-cols-6">
           {BUILT_ALONG.map((s, i) => (
@@ -273,7 +352,7 @@ function BuiltAlong() {
 /* ------------------------------ 08 · Current status ----------------------------- */
 function CurrentStatus() {
   return (
-    <Section id="status" label="07 / Current status" title="Where I am" accent="now">
+    <Section id="status" label="05 / Current status" title="Where I am" accent="now">
       <Reveal>
         <div className="rounded-2xl border border-accent/25 bg-gradient-to-b from-accent/[0.06] to-transparent p-8 sm:p-10">
           <p className="text-xl font-semibold tracking-tight">Computer Science & Engineering</p>
@@ -296,9 +375,9 @@ export default function Background() {
       <BackgroundHero />
       <Education />
       <PracticalExperience />
-      <Certifications />
+      {/* <Certifications /> */}
       <Achievements />
-      <ProblemSolving />
+      {/* <ProblemSolving /> */}
       <BuiltAlong />
       <CurrentStatus />
       <PageCTA

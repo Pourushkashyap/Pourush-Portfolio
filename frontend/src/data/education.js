@@ -1,6 +1,5 @@
 // -----------------------------------------------------------------------------
 // Background page — Education, Practical Experience, Certifications, Achievements.
-// Replace the TODO-marked placeholders with your real dates / certificates.
 // -----------------------------------------------------------------------------
 
 export const EDUCATION = {
@@ -19,85 +18,146 @@ export const EDUCATION = {
 };
 
 export const SCHOOL = [
-  { level: 'Class XII', board: 'Punjab Agricultural University', score: '92.4%' },
-  { level: 'Class X', board: 'Holy Child Foundation High School', score: '98%' },
+  {
+    level: 'Class XII',
+    board: 'Punjab Agricultural University',
+    score: '92.4%',
+  },
+  {
+    level: 'Class X',
+    board: 'Holy Child Foundation High School',
+    score: '98%',
+  },
 ];
 
-// TODO: replace [Add dates] and the bullet points with the exact wording from
-// your Solitaire Infosys certificate / offer letter.
 export const EXPERIENCE = {
-  company: 'Solitaire Infosys',
-  role: 'Internship / Training Program',
-  date: '[Add dates]',
-  focus: 'Web Development / Software Development',
+  company: 'Solitair Infosys',
+  role: 'AI/ML Intern',
+  date: '15th May 2025 – 31st July 2025',
+  focus: 'Machine Learning / AI / Python',
+
   points: [
-    'Worked on practical software development tasks.',
-    'Applied development concepts in real project workflows.',
-    'Worked with modern development tools and technologies.',
-    'Collaborated in a structured development environment.',
+    'Developed a Crime Scene Detection web application for image-based analysis.',
+    'Built and integrated a YOLOv8-based Computer Vision model to detect bloodstains, knives and firearms from uploaded images.',
+    'Implemented an end-to-end pipeline that processes uploaded images and generates predictions dynamically.',
+    'Integrated the Machine Learning model with the web application using REST APIs for seamless frontend–backend communication.',
   ],
-  tech: ['React', 'JavaScript', 'Node.js', 'MongoDB'],
+
+  tech: [
+    'Python',
+    'Machine Learning',
+    'Computer Vision',
+    'YOLOv8',
+    'Flask',
+    'REST APIs',
+    'React.js',
+    'Tailwind CSS',
+  ],
+
   detail: {
-    role: 'Trainee / Intern — Web Development',
-    duration: '[Add duration]',
+    role: 'AI/ML Intern',
+    duration: '15th May 2025 – 31st July 2025',
+
     responsibilities: [
-      'Built and styled UI components for real project pages.',
-      'Integrated frontend views with backend APIs.',
-      'Worked with a team using Git-based version control.',
-      'Debugged issues across the stack under guidance.',
+      'Developed a Crime Scene Detection web application using React.js and Tailwind CSS.',
+      'Built a YOLOv8-based object detection model for detecting bloodstains, knives and firearms from uploaded images.',
+      'Preprocessed and analysed image data for Machine Learning inference.',
+      'Implemented an end-to-end image upload and prediction pipeline.',
+      'Integrated the Computer Vision model with the web application using Flask and REST APIs.',
+      'Generated dynamic predictions from uploaded crime-scene images.',
     ],
-    technologies: ['React', 'JavaScript', 'Node.js', 'MongoDB', 'Git'],
-    projects: ['[Add project name(s) from the certificate]'],
-    learned: 'How a real development team plans, builds and ships a web application end to end.',
+
+    technologies: [
+      'Python',
+      'Machine Learning',
+      'Computer Vision',
+      'YOLOv8',
+      'Flask',
+      'REST APIs',
+      'React.js',
+      'Tailwind CSS',
+    ],
+
+    projects: [
+      'Crime Scene Detection',
+    ],
+
+    learned:
+      'Developed practical experience in Computer Vision, object detection, image processing, YOLOv8, model integration, REST API development and building an end-to-end AI/ML application.',
   },
 };
 
 export const TRAINING = {
-  program: 'Solitaire Infosys — Technical Training Program',
-  duration: '[Add duration]',
-  focus: ['Web Development', 'Programming', 'Software Development'],
-  skills: ['React', 'JavaScript', 'Node.js', 'MongoDB'],
+  program: 'Solitair Infosys — Technical Training Program',
+  duration: '15th May 2025 – 31st July 2025',
+
+  focus: [
+    'Machine Learning',
+    'Python Programming',
+    'Computer Vision',
+    'Object Detection',
+    'Image Processing',
+    'Model Development',
+    'Model Integration',
+  ],
+
+  skills: [
+    'Python',
+    'NumPy',
+    'Pandas',
+    'YOLOv8',
+    'Scikit-learn',
+    'Computer Vision',
+    'Flask',
+    'REST APIs',
+  ],
 };
 
-// TODO: swap these placeholders for your real certificates (name, issuer, year, link).
 export const CERTIFICATIONS = [
-  {
-    name: '[Certificate name]',
-    issuer: '[Issuing platform / organisation]',
-    year: '2026',
-    category: 'AI / ML',
-    url: '',
-  },
-  {
-    name: '[Certificate name]',
-    issuer: '[Issuing platform / organisation]',
-    year: '2026',
-    category: 'Development',
-    url: '',
-  },
+  // Add verified certificates here when you provide
+  // the certificate name, issuer, year and URL.
 ];
 
-export const CERT_CATEGORIES = ['All', 'AI / ML', 'Development', 'Cloud / DevOps', 'Other'];
+export const CERT_CATEGORIES = [
+  'All',
+  'AI / ML',
+  'Development',
+  'Cloud / DevOps',
+  'Other',
+];
 
 export const ACHIEVEMENTS = [
   {
     tag: 'Coding',
-    title: '850+ LeetCode Problems',
-    text: 'Consistent problem-solving practice focused on data structures and algorithms.',
+    title: '950+ LeetCode Problems',
+    text:
+      'Consistent problem-solving practice focused on data structures and algorithms.',
   },
+
   {
     tag: 'Hackathon',
     title: 'Best Startup Award — Code Crafter 2.0',
-    text: 'Recognized for developing and presenting a startup-oriented technology solution during the hackathon.',
+    text:
+      'Recognized for developing and presenting a startup-oriented technology solution during the hackathon.',
   },
+
   {
     tag: 'Leadership',
     title: 'Coordinator — Udaan, CT University',
-    text: 'Contributed to organizing and coordinating activities within the university.',
+    text:
+      'Contributed to organizing and coordinating activities within the university.',
   },
 ];
 
-export const PROBLEM_TAGS = ['Arrays', 'Strings', 'Trees', 'Graphs', 'Dynamic Programming', 'Binary Search', 'Greedy'];
+export const PROBLEM_TAGS = [
+  'Arrays',
+  'Strings',
+  'Trees',
+  'Graphs',
+  'Dynamic Programming',
+  'Binary Search',
+  'Greedy',
+];
 
 export const BUILT_ALONG = [
   'Education',
@@ -112,6 +172,8 @@ export const CURRENT_FOCUS = [
   'AI / Machine Learning',
   'Generative AI',
   'Agentic AI',
-  'LangGraph & MCP',
+  'LangGraph',
+  'MCP',
+  'RAG',
   'AI-powered software systems',
 ];

@@ -13,13 +13,13 @@ export const PROJECTS = [
   { slug: 'agentforge', tier: 1, name: 'AgentForge', sub: 'Autonomous AI Website Builder', cats: ['Agentic AI', 'Generative AI'], tags: ['LangGraph', 'LLM', 'Docker'], viz: 'agents', text: 'Turns a plain-language idea into a planned, generated, tested and deployed web app using specialized agents.' },
   { slug: 'self-healing-debugger', tier: 1, name: 'Self-Healing Debugger', sub: 'Autonomous debugging and self-recovery', cats: ['Agentic AI'], tags: ['LangGraph', 'FastAPI', 'Docker', 'AST', 'Agents'], viz: 'loop', text: 'Detects errors, finds root causes, generates fixes, tests them in a sandbox and validates regressions.' },
   { slug: 'fingrow', tier: 1, name: 'FinGrow', sub: 'AI-enabled peer-to-peer lending platform', cats: ['Full Stack', 'Machine Learning'], tags: ['React', 'Node', 'MongoDB', 'AI/ML'], viz: 'finance', text: 'Full-stack financial platform for peer-to-peer lending workflows with intelligent decision support.' },
+  { slug: 'codepilot-ai', tier: 1, name: 'CodePilot AI', sub: 'Multi-agent RAG coding assistant', cats: ['Agentic AI', 'Generative AI'], tags: ['LangGraph', 'FastAPI', 'RAG', 'Vector DB'], viz: 'pipeline', text: 'Indexes a codebase, then answers questions about it through a routed multi-agent workflow with guardrails, retrieval and answer validation.' },
   { slug: 'fitgenius', tier: 2, name: 'FitGenius AI', sub: 'Personalised diet & workout recommendations', cats: ['Machine Learning', 'Full Stack'], tags: ['Python', 'Scikit-learn', 'Flask', 'React'], viz: 'pipeline', text: 'ML recommendation system that turns user data into tailored diet and workout plans.' },
-  { slug: 'crime-scene-detection', tier: 2, name: 'Crime Scene Detection', sub: 'Computer vision for crime-scene analysis', cats: ['Machine Learning'], tags: ['YOLOv8', 'Flask', 'React', 'Computer Vision'], viz: 'vision', text: 'Object detection pipeline that identifies relevant items in crime-scene imagery.' },
   { slug: 'silentsos', tier: 2, name: 'SilentSOS', sub: 'Voice-based intelligent safety system', cats: ['Machine Learning', 'Full Stack'], tags: ['React Native', 'Python', 'MFCC', 'ML'], viz: 'audio', text: 'Mobile safety app that analyses voice features to trigger help when it matters.' },
-  { slug: 'instagram-clone', tier: 3, name: 'Instagram Clone', sub: 'Full-stack social app', cats: ['Full Stack'], tags: ['Full Stack'], viz: 'app' },
-  { slug: 'swiggy-clone', tier: 3, name: 'Swiggy Clone', sub: 'Food-ordering app', cats: ['Full Stack'], tags: ['Full Stack'], viz: 'app' },
-  { slug: 'netflix-clone', tier: 3, name: 'Netflix Clone', sub: 'Streaming UI', cats: ['Full Stack'], tags: ['Full Stack'], viz: 'app' },
-  { slug: 'portfolio', tier: 3, name: 'Portfolio', sub: 'This site — React, Tailwind, 3D', cats: ['Full Stack'], tags: ['React', 'Tailwind'], viz: 'app' },
+  // { slug: 'instagram-clone', tier: 3, name: 'Instagram Clone', sub: 'Full-stack social app', cats: ['Full Stack'], tags: ['Full Stack'], viz: 'app' },
+  // { slug: 'swiggy-clone', tier: 3, name: 'Swiggy Clone', sub: 'Food-ordering app', cats: ['Full Stack'], tags: ['Full Stack'], viz: 'app' },
+  // { slug: 'netflix-clone', tier: 3, name: 'Netflix Clone', sub: 'Streaming UI', cats: ['Full Stack'], tags: ['Full Stack'], viz: 'app' },
+  // { slug: 'portfolio', tier: 3, name: 'Portfolio', sub: 'This site — React, Tailwind, 3D', cats: ['Full Stack'], tags: ['React', 'Tailwind'], viz: 'app' },
 ];
 
 /* ------------------------------ AgentForge ------------------------------ */
@@ -72,6 +72,22 @@ export const FITGENIUS = {
     N('Plan', 3.6, -0.2, 0, { kind: 'gem', desc: 'A tailored diet and workout recommendation.' }),
   ],
   edges: [[0, 1], [1, 2], [2, 3], [3, 4]],
+};
+
+export const CODEPILOT = {
+  nodes: [
+    N('Question', -4.4, 0.2, 0, { kind: 'gem', desc: 'A question comes in about the indexed codebase.' }),
+    N('Guardrails', -3.1, 1.1, 0.6, { desc: 'Input guardrail + LLM guardrail agents screen the question.' }),
+    N('Cache', -1.9, -0.9, -0.5, { desc: 'Checks the answer cache before doing any retrieval.' }),
+    N('Intent Router', -0.5, 0.6, 0.5, { size: 1.5, desc: 'Classifies the question as specific, broad or casual and routes it.' }),
+    N('Retrieval', 0.9, 1.8, -0.3, { desc: 'Specific questions hit the retriever, with a retrieval guard and expanded-retry.' }),
+    N('Overview', 0.9, 0.2, 0.7, { desc: 'Broad questions pull project-level overview context.' }),
+    N('Casual', 0.9, -1.4, -0.6, { desc: 'Casual questions skip retrieval and go straight to a response.' }),
+    N('Answer Agent', 2.5, 0.4, 0.4, { size: 1.3, desc: 'Drafts an answer from the question plus whatever context was gathered.' }),
+    N('Validate', 3.7, -0.6, -0.4, { desc: 'Answer validation agent checks the draft before it is cached.' }),
+    N('Response', 4.9, 0.2, 0, { kind: 'gem', desc: 'The validated answer streams back to the UI.' }),
+  ],
+  edges: [[0, 1], [1, 2], [2, 3], [3, 4], [3, 5], [3, 6], [4, 7], [5, 7], [6, 7], [7, 8], [8, 9]],
 };
 
 /* ------------------------------ AI Systems Lab ------------------------------ */
@@ -137,3 +153,4 @@ export const HIGHLIGHTS = [
   { title: 'Deployment', text: 'Moving AI applications from local development toward production.' },
   { title: 'Reliability', text: 'Handling failures, retries, validation and safe execution.' },
 ];
+

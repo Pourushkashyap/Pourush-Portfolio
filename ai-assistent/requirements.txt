@@ -1,0 +1,26 @@
+# API / Backend
+fastapi
+uvicorn[standard]
+python-dotenv
+pydantic
+pydantic-settings
+
+# LangChain / LangGraph
+langchain
+langchain-core
+langchain-groq
+langchain-google-genai
+langgraph
+langchain-text-splitters
+
+# PDF
+pymupdf
+
+# Vector Store
+chromadb
+langchain-chroma
+
+# Utilities
+typing-extensions
+
+rank-bm25

@@ -75,7 +75,7 @@ function ConnectInfo() {
             );
           })}
           <li>
-            <a href={PROFILE.resumeUrl} download className="group flex items-center justify-between rounded-xl border border-line/10 bg-bg/40 px-4 py-3 transition hover:border-accent/40">
+            <a href="/Pourush%20resume.pdf" download className="group flex items-center justify-between rounded-xl border border-line/10 bg-bg/40 px-4 py-3 transition hover:border-accent/40">
               <span className="flex items-center gap-3"><DownloadIcon width={16} height={16} className="text-muted transition group-hover:text-accent" /><span className="text-[14px] font-medium">Resume</span></span>
               <span className="text-[12.5px] text-muted">View / Download</span>
             </a>
@@ -226,7 +226,7 @@ export default function Contact({ onOpenChat }) {
         accent="Engineer in the making?"
         text="I'm currently focused on building intelligent systems with Machine Learning, Generative AI, RAG, and Agentic AI."
       >
-        <a href={PROFILE.resumeUrl} download className="inline-flex items-center gap-2 rounded-full border border-line/20 px-6 py-3 text-[15px] font-medium transition hover:border-accent/60 hover:text-accent">View Resume</a>
+        <a href="/Pourush%20resume.pdf" download className="inline-flex items-center gap-2 rounded-full border border-line/20 px-6 py-3 text-[15px] font-medium transition hover:border-accent/60 hover:text-accent">View Resume</a>
         <LinkBtn href="#/projects" ghost>View Projects</LinkBtn>
         <LinkBtn href={`mailto:${PROFILE.email}`}>Get in Touch</LinkBtn>
       </PageCTA>
