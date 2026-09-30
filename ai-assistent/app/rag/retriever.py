@@ -112,20 +112,16 @@ def project_aliases(name: str) -> set[str]:
     return {alias for alias in aliases if len(alias) >= 6}
 
 
-def get_all_documents() -> list[Document]:
+def get_all_documents():
     vectorstore = get_vectorstore()
-
-    data = vectorstore.get(include=["documents", "metadatas"])
 
     documents = []
 
-    for content, metadata in zip(data["documents"], data["metadatas"]):
-        metadata = metadata or {}
+    for doc_id in vectorstore.index_to_docstore_id.values():
+        document = vectorstore.docstore.search(doc_id)
 
-        if not metadata.get("retrieval_allowed", True):
-            continue
-
-        documents.append(Document(page_content=content, metadata=metadata))
+        if document is not None:
+            documents.append(document)
 
     return documents
 

@@ -1,9 +1,13 @@
+from pathlib import Path
+
 from app.rag.loader import load_pdf
 from app.rag.splitter import split_documents
-from app.rag.vectorstore import get_vectorstore
+from app.rag.embeddings import get_embeddings
+from langchain_community.vectorstores import FAISS
 
 
 PDF_PATH = "data/Pourush_Kashyap_Complete_RAG_Knowledge_Base_With_Tech_Section_Corrected.pdf"
+FAISS_DIR = Path("vector_store")
 
 
 def main():
@@ -26,35 +30,32 @@ def main():
 
         print("-" * 80)
 
-        print(
-            "Page:",
-            chunk.metadata.get("page"),
-        )
+        print("Page:", chunk.metadata.get("page"))
 
-        print(
-            "Section:",
-            chunk.metadata.get("section_title"),
-        )
+        print("Section:", chunk.metadata.get("section_title"))
 
-        print(
-            "Project:",
-            chunk.metadata.get("project_name"),
-        )
+        print("Project:", chunk.metadata.get("project_name"))
 
-        print(
-            "Content:",
-            chunk.page_content[:300],
-        )
+        print("Content:", chunk.page_content[:300])
 
-    print("\nCreating Gemini embeddings and storing in Chroma...")
+    print("\nCreating Gemini embeddings...")
 
-    vectorstore = get_vectorstore()
+    embeddings = get_embeddings()
 
-    vectorstore.add_documents(chunks)
+    print("Creating FAISS index...")
+
+    vectorstore = FAISS.from_documents(
+        chunks,
+        embeddings,
+    )
+
+    FAISS_DIR.mkdir(parents=True, exist_ok=True)
+
+    vectorstore.save_local(str(FAISS_DIR))
 
     print("\nIngestion completed successfully.")
 
-    print("Vector store saved to: chroma_db/")
+    print(f"FAISS index saved to: {FAISS_DIR}/")
 
 
 if __name__ == "__main__":

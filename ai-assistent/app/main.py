@@ -14,6 +14,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
+        # Add deployed frontend URL here after frontend deployment
     ],
     allow_credentials=True,
     allow_methods=["*"],

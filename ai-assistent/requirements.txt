@@ -17,8 +17,9 @@ langchain-text-splitters
 pymupdf
 
 # Vector Store
-chromadb
-langchain-chroma
+
+faiss-cpu
+langchain-community
 
 # Utilities
 typing-extensions

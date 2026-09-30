@@ -1,21 +1,20 @@
 from pathlib import Path
 
-from langchain_chroma import Chroma
+from langchain_community.vectorstores import FAISS
 
 from app.rag.embeddings import get_embeddings
 
 
-CHROMA_DIR = Path("chroma_db")
-COLLECTION_NAME = "pourush_portfolio"
+FAISS_DIR = Path("vector_store")
 
 
-def get_vectorstore() -> Chroma:
+def get_vectorstore() -> FAISS:
     embeddings = get_embeddings()
 
-    vectorstore = Chroma(
-        collection_name=COLLECTION_NAME,
-        embedding_function=embeddings,
-        persist_directory=str(CHROMA_DIR),
+    vectorstore = FAISS.load_local(
+        str(FAISS_DIR),
+        embeddings,
+        allow_dangerous_deserialization=True,
     )
 
     return vectorstore
