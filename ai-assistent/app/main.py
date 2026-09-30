@@ -14,7 +14,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        'https://pourush-portfolio.vercel.app/'
+        'https://pourush-portfolio.vercel.app'
         # Add deployed frontend URL here after frontend deployment
     ],
     allow_credentials=True,
