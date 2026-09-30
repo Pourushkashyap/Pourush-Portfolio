@@ -91,11 +91,35 @@ function MessageForm() {
   const [values, setValues] = useState({ name: '', email: '', company: '', message: '' });
   const set = (k) => (e) => setValues((v) => ({ ...v, [k]: e.target.value }));
 
-  const submit = (e) => {
-    e.preventDefault();
-    // Demo only — wire this up to your backend or an email service (e.g. Formspree, Resend).
-    setSent(true);
-  };
+  const submit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const response = await fetch('https://formspree.io/f/mbglbald', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(values),
+    });
+
+    if (response.ok) {
+      setSent(true);
+      setValues({
+        name: '',
+        email: '',
+        company: '',
+        message: '',
+      });
+    } else {
+      alert('Failed to send message. Please try again.');
+    }
+  } catch (error) {
+    console.error(error);
+    alert('Something went wrong. Please try again.');
+  }
+};
 
   return (
     <Reveal delay={120}>
@@ -105,27 +129,42 @@ function MessageForm() {
           <div className="mt-8 flex flex-col items-center justify-center rounded-xl border border-accent/25 bg-accent/[0.06] px-6 py-14 text-center">
             <span className="grid h-11 w-11 place-items-center rounded-full bg-accent text-accent-ink"><SendIcon width={18} height={18} /></span>
             <p className="mt-4 text-[15px] font-medium">Thanks — message received.</p>
-            <p className="mt-1 text-[13.5px] text-muted">This is a demo form; connect it to your inbox to go live.</p>
+            <p className="mt-1 text-[13.5px] text-muted">Your message has been sent successfully. I’ll get back to you soon.</p>
           </div>
         ) : (
           <form onSubmit={submit} className="mt-6 space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block">
                 <span className="mb-1.5 block font-mono text-[11px] uppercase tracking-[0.12em] text-muted">Name</span>
-                <input required value={values.name} onChange={set('name')} type="text" placeholder="Your name" className="w-full rounded-xl border border-line/15 bg-bg px-4 py-2.5 text-[14.5px] outline-none placeholder:text-muted/60 focus:border-accent/60" />
+                <input
+                    required
+                    name="name"
+                    value={values.name}
+                    onChange={set('name')}
+                    type="text"
+                    placeholder="Your name"
+                    className="w-full rounded-xl border border-line/15 bg-bg px-4 py-2.5 text-[14.5px] outline-none placeholder:text-muted/60 focus:border-accent/60"
+                  />
               </label>
               <label className="block">
                 <span className="mb-1.5 block font-mono text-[11px] uppercase tracking-[0.12em] text-muted">Email</span>
-                <input required value={values.email} onChange={set('email')} type="email" placeholder="you@company.com" className="w-full rounded-xl border border-line/15 bg-bg px-4 py-2.5 text-[14.5px] outline-none placeholder:text-muted/60 focus:border-accent/60" />
+                <input 
+                required
+                 name="email"
+                 value={values.email} 
+                 onChange={set('email')}
+                  type="email"
+                   placeholder="you@company.com" 
+                   className="w-full rounded-xl border border-line/15 bg-bg px-4 py-2.5 text-[14.5px] outline-none placeholder:text-muted/60 focus:border-accent/60" />
               </label>
             </div>
             <label className="block">
               <span className="mb-1.5 block font-mono text-[11px] uppercase tracking-[0.12em] text-muted">Company / Organization</span>
-              <input value={values.company} onChange={set('company')} type="text" placeholder="Optional" className="w-full rounded-xl border border-line/15 bg-bg px-4 py-2.5 text-[14.5px] outline-none placeholder:text-muted/60 focus:border-accent/60" />
+              <input name="company" value={values.company} onChange={set('company')} type="text" placeholder="Optional" className="w-full rounded-xl border border-line/15 bg-bg px-4 py-2.5 text-[14.5px] outline-none placeholder:text-muted/60 focus:border-accent/60" />
             </label>
             <label className="block">
               <span className="mb-1.5 block font-mono text-[11px] uppercase tracking-[0.12em] text-muted">Message</span>
-              <textarea required value={values.message} onChange={set('message')} rows={5} placeholder="What would you like to build or discuss?" className="w-full resize-none rounded-xl border border-line/15 bg-bg px-4 py-2.5 text-[14.5px] outline-none placeholder:text-muted/60 focus:border-accent/60" />
+              <textarea name="message" required value={values.message} onChange={set('message')} rows={5} placeholder="What would you like to build or discuss?" className="w-full resize-none rounded-xl border border-line/15 bg-bg px-4 py-2.5 text-[14.5px] outline-none placeholder:text-muted/60 focus:border-accent/60" />
             </label>
             <button type="submit" className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-[15px] font-semibold text-accent-ink transition hover:brightness-110">
               Send Message <SendIcon width={15} height={15} className="transition-transform group-hover:translate-x-0.5" />

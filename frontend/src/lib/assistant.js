@@ -1,4 +1,4 @@
-const API_URL = 'http://127.0.0.1:8000';
+const API_URL = 'https://pourush-portfolio.onrender.com';
 
 export async function askAssistant(question) {
   const response = await fetch(`${API_URL}/api/chat`, {
