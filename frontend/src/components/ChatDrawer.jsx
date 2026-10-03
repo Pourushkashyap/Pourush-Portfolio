@@ -16,35 +16,57 @@ export default function ChatDrawer({ open, prompt, nonce, onClose }) {
   const inputRef = useRef(null);
 
   const send = useCallback(async (q) => {
-    const text = q.trim();
-    if (!text || busy) return;
-    setMessages((m) => [...m, { role: 'user', text }]);
-    setInput('');
-    setBusy(true);
-    try {
-      const answer = await askAssistant(text);
+  const text = q.trim();
 
-      setMessages((m) => [
-        ...m,
-        {
-          role: 'assistant',
-          text: answer,
-        },
-      ]);
-    } catch (error) {
-      console.error('Assistant API error:', error);
+  if (!text || busy) return;
 
-      setMessages((m) => [
-        ...m,
-        {
-          role: 'assistant',
-          text: 'Sorry, I could not connect to the AI assistant right now.',
-        },
-      ]);
-    } finally {
-      setBusy(false);
-    }
-  }, [busy]);
+  const history = messages
+    .filter(
+      (m) =>
+        (m.role === 'user' || m.role === 'assistant') &&
+        m.text !== GREETING.text
+    )
+    .map((m) => ({
+      role: m.role,
+      content: m.text,
+    }))
+    .slice(-6);
+
+  setMessages((m) => [
+    ...m,
+    {
+      role: 'user',
+      text,
+    },
+  ]);
+
+  setInput('');
+  setBusy(true);
+
+  try {
+    const answer = await askAssistant(text, history);
+
+    setMessages((m) => [
+      ...m,
+      {
+        role: 'assistant',
+        text: answer,
+      },
+    ]);
+  } catch (error) {
+    console.error('Assistant API error:', error);
+
+    setMessages((m) => [
+      ...m,
+      {
+        role: 'assistant',
+        text: 'Sorry, I could not connect to the AI assistant right now.',
+      },
+    ]);
+  } finally {
+    setBusy(false);
+  }
+}, [busy, messages]);
 
   // A suggested prompt clicked elsewhere on the page is sent automatically.
   useEffect(() => {
