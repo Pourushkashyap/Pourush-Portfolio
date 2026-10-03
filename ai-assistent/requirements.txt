@@ -23,5 +23,5 @@ langchain-community
 
 # Utilities
 typing-extensions
-
+flashrank
 rank-bm25

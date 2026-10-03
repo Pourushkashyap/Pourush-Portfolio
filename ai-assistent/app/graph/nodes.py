@@ -1,8 +1,11 @@
 from app.graph.state import ChatState
 from app.llm.model import llm
+from app.rag.query_transformer import transform_query
 from app.rag.retriever import retrieve_documents
 from app.services.answerability_service import check_answerability
 from app.services.contact_service import build_contact_answer
+from app.services.not_found_service import build_not_found_answer
+from app.services.pronouns import resolve_owner_pronouns
 from app.services.response_service import NOT_FOUND_MESSAGE, generate_answer
 from app.services.validation_service import (
     validate_answer as validate_generated_answer,
@@ -37,6 +40,11 @@ CASUAL_FALLBACK = (
 )
 
 
+def resolved_query(state: ChatState) -> str:
+    """The question with follow-up references resolved ("its future plans" -> project)."""
+    return state.get("contextualized_query", state["query"])
+
+
 def casual_response(state: ChatState) -> dict:
     try:
         response = llm.invoke(CASUAL_PROMPT.format(query=state["query"]))
@@ -62,19 +70,42 @@ def refusal_response(state: ChatState) -> dict:
 
 
 def not_found_response(state: ChatState) -> dict:
-    return {"answer": NOT_FOUND_MESSAGE}
+    # Friendly "I don't know" + Pourush's email and phone
+    return {"answer": build_not_found_answer(resolved_query(state))}
+
+
+def contextualize(state: ChatState) -> dict:
+    rewritten_query = contextualize_query(
+        query=state["query"],
+        messages=state.get("messages", []),
+    )
+
+    # "Does he know Python?" -> "Does Pourush know Python?"
+    # (the reranker cannot match "he" to the name in the knowledge base)
+    return {"contextualized_query": resolve_owner_pronouns(rewritten_query)}
+
+
+def query_transform(state: ChatState) -> dict:
+    query = resolved_query(state)
+    result = transform_query(query)
+
+    return {
+        "original_query": query,
+        "rewritten_query": result["rewritten_query"],
+        "expanded_queries": result["expanded_queries"],
+        "sub_queries": result["sub_queries"],
+    }
 
 
 def retrieve(state: ChatState) -> dict:
-    query = state.get(
-        "contextualized_query",
-        state["query"],
-    )
+    original_query = resolved_query(state)
 
     documents = retrieve_documents(
-        query=query,
+        query=original_query,
+        rewritten_query=state.get("rewritten_query", original_query),
+        expanded_queries=state.get("expanded_queries", []),
+        sub_queries=state.get("sub_queries", []),
         k=5,
-        use_expansion=True,
     )
 
     return {"documents": documents}
@@ -90,7 +121,7 @@ def answerability(state: ChatState) -> dict:
         }
 
     result = check_answerability(
-        query=state["query"],
+        query=resolved_query(state),
         documents=documents,
     )
 
@@ -122,7 +153,7 @@ def generate(state: ChatState) -> dict:
         feedback = "\n".join(parts) or None
 
     answer = generate_answer(
-        query=state["query"],
+        query=resolved_query(state),
         documents=state.get("documents", []),
         feedback=feedback,
     )
@@ -130,19 +161,6 @@ def generate(state: ChatState) -> dict:
     return {
         "answer": answer,
         "attempts": attempts + 1,
-    }
-
-def contextualize(state: ChatState) -> dict:
-    query = state["query"]
-    messages = state.get("messages", [])
-
-    rewritten_query = contextualize_query(
-        query=query,
-        messages=messages,
-    )
-
-    return {
-        "contextualized_query": rewritten_query
     }
 
 
@@ -157,9 +175,11 @@ def validate(state: ChatState) -> dict:
             "unsupported_claims": [],
         }
 
-    # The model correctly said it has no information: nothing to validate
+    # The model correctly said it has no information: nothing to validate.
+    # Replace the bare message with the friendly "I don't know" + contact details.
     if answer.strip() == NOT_FOUND_MESSAGE:
         return {
+            "answer": build_not_found_answer(resolved_query(state)),
             "is_grounded": True,
             "validation_reason": "Answer is the standard not-found message.",
             "unsupported_claims": [],
@@ -173,7 +193,7 @@ def validate(state: ChatState) -> dict:
         }
 
     result = validate_generated_answer(
-        query=state["query"],
+        query=resolved_query(state),
         answer=answer,
         documents=documents,
     )

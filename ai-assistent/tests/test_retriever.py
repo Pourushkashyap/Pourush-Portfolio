@@ -1,4 +1,12 @@
+import sys
+
 from app.rag.retriever import retrieve_documents
+
+# Windows console safety for characters like the em dash in section titles.
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
 
 # (question, text unique to the correct chunk, max allowed rank)
 TEST_CASES = [
@@ -34,11 +42,25 @@ OUT_OF_SCOPE = [
 K = 4
 
 
+def describe(document, rank):
+    title = document.metadata.get("section_title", "?")
+    project = document.metadata.get("project_name", "-")
+    page = document.metadata.get("page")
+    score = document.metadata.get("rerank_score")
+    try:
+        # FlashRank returns numpy.float32, so convert instead of isinstance().
+        score_text = f"{float(score):.3f}"
+    except (TypeError, ValueError):
+        score_text = "rule"  # chunk chosen by a rule, never reranked
+    return f"  {rank}. page {page} | {title} | project: {project} | score: {score_text}"
+
+
 def main():
     passed = 0
 
     for question, expected, max_rank in TEST_CASES:
-        documents = retrieve_documents(question, k=K)
+        # compress=False: test retrieval on the full chunk text.
+        documents = retrieve_documents(question, k=K, compress=False)
 
         found_at = None
         for rank, document in enumerate(documents, start=1):
@@ -62,21 +84,20 @@ def main():
         print("-" * 100)
 
         for rank, document in enumerate(documents, start=1):
-            title = document.metadata.get("section_title", "?")
-            project = document.metadata.get("project_name", "-")
-            page = document.metadata.get("page")
-            print(f"  {rank}. page {page} | {title} | project: {project}")
+            print(describe(document, rank))
 
     print("\n" + "#" * 100)
     print(f"RESULT: {passed}/{len(TEST_CASES)} passed")
     print("#" * 100)
 
-    print("\nOUT-OF-SCOPE QUESTIONS (top results should look unrelated):")
+    print("\nOUT-OF-SCOPE QUESTIONS (ideally no results, or clearly unrelated):")
     for question in OUT_OF_SCOPE:
-        documents = retrieve_documents(question, k=2)
+        documents = retrieve_documents(question, k=2, compress=False)
         print(f"\n  Q: {question}")
-        for document in documents:
-            print(f"     -> {document.metadata.get('section_title', '?')}")
+        if not documents:
+            print("     -> (no context returned)")
+        for rank, document in enumerate(documents, start=1):
+            print("  " + describe(document, rank))
 
 
 if __name__ == "__main__":

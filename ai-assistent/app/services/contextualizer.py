@@ -80,6 +80,14 @@ def contextualize_query(
         rewritten = response.content.strip()
 
         if rewritten:
+            print("\n" + "=" * 60)
+            print("ORIGINAL QUERY:")
+            print(query)
+
+            print("\nREWRITTEN QUERY:")
+            print(rewritten)
+
+            print("=" * 60)
             return rewritten
 
     except Exception:

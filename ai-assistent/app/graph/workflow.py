@@ -11,6 +11,9 @@ from app.graph.nodes import (
     refusal_response,
     not_found_response,
     contextualize,
+
+    query_transform,
+
     retrieve,
     answerability,
     generate,
@@ -33,7 +36,10 @@ def build_graph():
     graph.add_node("contact_response", contact_response)
     graph.add_node("refusal", refusal_response)
     graph.add_node("not_found", not_found_response)
-
+    graph.add_node(
+    "query_transform",
+    query_transform,
+)
     graph.add_node("retrieve", retrieve)
     graph.add_node("answerability", answerability)
     graph.add_node("generate", generate)
@@ -54,10 +60,14 @@ def build_graph():
         {
             "casual": "casual_response",
             "contact": "contact_response",
-            "portfolio": "retrieve",
+            "portfolio": "query_transform",
             "other": "refusal",
         },
     )
+    graph.add_edge(
+    "query_transform",
+    "retrieve",
+)
 
     # -------------------------
     # Simple branches

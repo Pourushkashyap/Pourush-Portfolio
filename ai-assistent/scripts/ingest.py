@@ -6,7 +6,7 @@ from app.rag.embeddings import get_embeddings
 from langchain_community.vectorstores import FAISS
 
 
-PDF_PATH = "data/Pourush_Kashyap_Complete_RAG_Knowledge_Base_With_Tech_Section_Corrected.pdf"
+PDF_PATH = "data/Pourush_Kashyap_Profile.pdf"
 FAISS_DIR = Path("vector_store")
 
 

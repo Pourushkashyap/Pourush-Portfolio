@@ -5,7 +5,9 @@ from app.rag.retriever import get_all_documents
 
 NOT_FOUND = "I don't have that information in Pourush's portfolio/project knowledge base."
 
-CONTACT_SECTION = "contact & professional identity"
+# The new PDF names this section "Contact Information and Links", so match
+# on the word "contact" (same rule the retriever uses).
+CONTACT_SECTION = "contact"
 
 # Extracted from the knowledge-base text, nothing is hard-coded here
 PATTERNS = {

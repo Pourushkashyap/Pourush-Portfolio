@@ -1,68 +1,67 @@
+"""
+Structure-aware splitter. Works from the heading markers produced by
+loader.py, so it does not depend on heading numbers or fixed heading names.
+
+    Section heading   "Project: AgentForge"   -> project_name = AgentForge
+                      "Internship: Acme"      -> entity_type=internship
+                      "Education"             -> plain section
+    Sub-heading       any text ("Future improvements", "Challenges", ...)
+
+Every chunk starts with a header naming its project/section and topic, so it
+makes sense on its own when retrieved.
+"""
+
 import re
+from collections import Counter
 
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-# One-line numbered heading, e.g. "5. Project — Crime Scene Detection"
-HEADING_PATTERN = re.compile(
-    r"(?m)^(?P<number>\d{1,2})\.\s+(?P<title>[A-Z][^\n]*)$"
-)
+from app.rag.loader import SECTION_MARK, SUBSECTION_MARK, TITLE_MARK
 
-PROJECT_PATTERN = re.compile(r"^Project\s+—\s+(.+)$", re.IGNORECASE)
+SECTION_PATTERN = re.compile(r"(?m)^" + re.escape(SECTION_MARK) + r" (?P<title>.+)$")
+SUBSECTION_PATTERN = re.compile(r"(?m)^" + re.escape(SUBSECTION_MARK) + r" (?P<title>.+)$")
 
-# A heading line ending with one of these words wraps onto the next line
-CONTINUATION_WORDS = {"to", "and", "of", "for", "the", "a", "in", "&", "—", "-", "should"}
+NUMBERING = re.compile(r"^\d{1,2}[.)]\s+")
+ENTITY_PATTERN = re.compile(r"^(?P<kind>[A-Za-z][\w &/]{0,30}?)\s*[:\-–—]\s+(?P<name>.+)$")
+PROJECT_KINDS = {"project"}
 
-# Knowledge-base control sections that must never be retrieved
-BLOCKED_PHRASES = [
-    "high-value questions this knowledge base should answer",
-    "recommended chunking strategy",
-    "rag assistant — exact answering rules",
-    "end of deep rag knowledge base",
-]
-
-ADDENDUM_MARKER = "Pourush Kashyap — Project Technology Stack"
-
-ADDENDUM_PROJECTS = [
-    "Crime Scene Detection",
-    "SilentSOS",
-    "FinGrow",
-    "FitGenius AI",
-    "CodePilot AI",
-    "AgentForge",
-    "Self-Healing Debugger",
-    "Portfolio Website",
-]
-
-
-
-def normalize(text: str) -> str:
-    return re.sub(r"\s+", " ", text.strip()).lower()
-
-
-def is_blocked(section_text: str) -> bool:
-    """Check only the heading area of a section, never its whole body."""
-    head = normalize(section_text[:250])
-    return any(phrase in head for phrase in BLOCKED_PHRASES)
+CHUNK_SIZE = 1200
+CHUNK_OVERLAP = 150
 
 
 def clean_metadata(metadata: dict) -> dict:
-    """Chroma does not accept None metadata values."""
     return {key: value for key, value in metadata.items() if value is not None}
 
 
+def _page_separator(previous_text: str) -> str:
+    """Join with a space only when a paragraph continues on the next page."""
+    last = previous_text.rstrip().split("\n\n")[-1]
+
+    if last.startswith("[[") or last.endswith((".", "!", "?", ":")):
+        return "\n\n"
+
+    return " "
+
+
 def merge_pages(documents: list[Document]) -> tuple[str, list[tuple[int, int]]]:
-    """Join all pages into one text; remember (start_offset, page_number)."""
-    parts = []
-    offsets = []
+    parts: list[str] = []
+    offsets: list[tuple[int, int]] = []
     cursor = 0
+    previous = ""
 
     for doc in documents:
+        if parts:
+            separator = _page_separator(previous)
+            parts.append(separator)
+            cursor += len(separator)
+
         offsets.append((cursor, doc.metadata.get("page", 0)))
         parts.append(doc.page_content)
-        cursor += len(doc.page_content) + 1  # +1 for the "\n" used in join
+        cursor += len(doc.page_content)
+        previous = doc.page_content
 
-    return "\n".join(parts), offsets
+    return "".join(parts), offsets
 
 
 def page_at(offset: int, offsets: list[tuple[int, int]]) -> int:
@@ -77,267 +76,190 @@ def page_at(offset: int, offsets: list[tuple[int, int]]) -> int:
     return page
 
 
-def find_headings(text: str) -> list[dict]:
-    """
-    Find numbered headings in strict sequence (1, 2, 3, ...).
-    This avoids false positives from numbered lines inside section bodies.
-    """
-    headings = []
-    expected = 1
+def parse_title(raw_title: str) -> dict:
+    title = NUMBERING.sub("", raw_title.strip())
+    match = ENTITY_PATTERN.match(title)
 
-    for match in HEADING_PATTERN.finditer(text):
-        if int(match.group("number")) != expected:
-            continue
+    kind = name = None
+    if match:
+        kind = match.group("kind").strip().lower()
+        name = match.group("name").strip()
 
-        title = match.group("title").strip()
-        end = match.end()
-
-        # Handle headings that wrap onto a second line
-        words = title.split()
-        last_word = words[-1].lower() if words else ""
-
-        if last_word in CONTINUATION_WORDS:
-            next_line = re.match(r"\n([^\n]+)", text[end:])
-            if next_line:
-                title = f"{title} {next_line.group(1).strip()}"
-                end += next_line.end()
-
-        headings.append(
-            {
-                "start": match.start(),
-                "body_start": end,
-                "title": title,
-                "number": expected,
-            }
-        )
-        expected += 1
-
-    return headings
+    return {
+        "title": title,
+        "entity_type": kind,
+        "entity_name": name,
+        "project": name if kind in PROJECT_KINDS else None,
+    }
 
 
-def split_preamble(preamble: str) -> list[tuple[str, str]]:
-    """
-    Split the unnumbered first-page text into:
-    - Overview
-    - Source Corrections (contains the Solitair internship correction)
-    """
-    match = re.search(r"(?m)^Critical correction[^\n]*$", preamble)
+def normalize_subsection(title: str, entity_name: str | None) -> str:
+    """'How AgentForge works' -> 'How it works' (name is already in the header)."""
+    title = title.strip()
 
-    if not match:
-        return [("Overview", preamble)]
+    if entity_name:
+        title = re.sub(re.escape(entity_name), "it", title, flags=re.IGNORECASE)
 
-    parts = []
+    return title
 
-    overview = preamble[:match.start()].strip()
-    corrections = preamble[match.start():].strip()
 
-    if overview:
-        parts.append(("Overview", overview))
-    if corrections:
-        parts.append(("Source Corrections", corrections))
+def split_subsections(
+    section_text: str,
+    body_start: int,
+    entity_name: str | None,
+) -> list[tuple[str | None, str, int]]:
+    body = section_text[body_start:]
+    matches = list(SUBSECTION_PATTERN.finditer(body))
+
+    if not matches:
+        return [(None, body.strip(), body_start)]
+
+    parts: list[tuple[str | None, str, int]] = []
+
+    intro = body[: matches[0].start()].strip()
+    if intro:
+        parts.append(("Overview", intro, body_start))
+
+    for i, match in enumerate(matches):
+        stop = matches[i + 1].start() if i + 1 < len(matches) else len(body)
+        content = body[match.end():stop].strip()
+
+        if content:
+            parts.append(
+                (
+                    normalize_subsection(match.group("title"), entity_name),
+                    content,
+                    body_start + match.start(),
+                )
+            )
 
     return parts
 
-def split_technology_addendum(
-    addendum_text: str,
-    source: str,
-    page: int,
-) -> list[Document]:
-    """
-    Split the Project Technology Stack addendum into one chunk per project.
-    Each project receives project_name metadata so project-specific retrieval
-    can find it directly.
-    """
-    sections: list[Document] = []
 
-    project_pattern = re.compile(
-    r"(?m)^(?:\d+\.\s*)?(" +
-    "|".join(re.escape(project) for project in ADDENDUM_PROJECTS) +
-    r")\s*$"
-)
+def build_header(title: str, project: str | None, subsection: str | None) -> str:
+    lines = [f"Project: {project}" if project else f"Section: {title}"]
 
-    matches = list(project_pattern.finditer(addendum_text))
-    print("DEBUG ADDENDUM PROJECT MATCHES:", [m.group(1) for m in matches])
+    if subsection:
+        lines.append(f"Topic: {subsection}")
 
-    for index, match in enumerate(matches):
-        project_name = match.group(1).strip()
+    return "\n".join(lines)
 
-        start = match.start()
-        end = matches[index + 1].start() if index + 1 < len(matches) else len(addendum_text)
 
-        content = addendum_text[start:end].strip()
-
-        if not content:
-            continue
-
-        sections.append(
-            Document(
-                page_content=content,
-                metadata=clean_metadata(
-                    {
-                        "source": source,
-                        "page": page,
-                        "section_title": "Project Technology Stack",
-                        "section_type": "project_technology_stack",
-                        "project_name": project_name,
-                        "retrieval_allowed": True,
-                        "chunk_index": index,
-                    }
-                ),
-            )
+def report(chunks: list[Document]) -> None:
+    """Printed on every ingest so structure problems are visible immediately."""
+    projects = list(
+        dict.fromkeys(
+            c.metadata["project_name"] for c in chunks if c.metadata.get("project_name")
         )
+    )
+    sections = list(
+        dict.fromkeys(
+            c.metadata["section_title"]
+            for c in chunks
+            if c.metadata.get("section_type") != "preamble"
+        )
+    )
+    types = Counter(c.metadata.get("section_type") for c in chunks)
 
-    return sections
+    print(f"Structure: {len(chunks)} chunks, {len(sections)} sections, {len(projects)} projects")
+    print(f"  Chunk types: {dict(types)}")
+    print(f"  Projects:    {projects}")
+    print(f"  Sections:    {sections}")
 
-def build_sections(documents: list[Document]) -> list[Document]:
+    oversized = [c for c in chunks if len(c.page_content) > CHUNK_SIZE * 1.3]
+    if oversized:
+        print(f"  WARNING: {len(oversized)} oversized chunks")
+    if not projects:
+        print("  WARNING: no 'Project: Name' sections found")
+
+
+def split_documents(documents: list[Document]) -> list[Document]:
     if not documents:
         return []
 
     text, offsets = merge_pages(documents)
-    headings = find_headings(text)
     source = documents[0].metadata.get("source")
+    sections = list(SECTION_PATTERN.finditer(text))
 
-    sections: list[Document] = []
-
-    first_start = headings[0]["start"] if headings else len(text)
-    preamble = text[:first_start].strip()
-
-    if preamble:
-        for title, part_text in split_preamble(preamble):
-            sections.append(
-                Document(
-                    page_content=part_text,
-                    metadata=clean_metadata(
-                        {
-                            "source": source,
-                            "page": offsets[0][1],
-                            "section_title": title,
-                            "section_type": "preamble",
-                            "retrieval_allowed": True,
-                        }
-                    ),
-                )
-            )
-
-    for i, heading in enumerate(headings):
-        end = headings[i + 1]["start"] if i + 1 < len(headings) else len(text)
-        section_text = text[heading["start"]:end].strip()
-
-        # IMPORTANT:
-        # The numbered Section 17 ends when the Technology Stack Addendum starts.
-        addendum_position = section_text.rfind("PROJECT TECHNOLOGY STACK")
-        print("DEBUG ADDENDUM IN SECTION:", "PROJECT TECHNOLOGY STACK" in section_text)
-        if addendum_position != -1:
-            # Everything before the addendum belongs to the numbered section.
-            main_section_text = section_text[:addendum_position].strip()
-
-            if main_section_text and not is_blocked(main_section_text):
-                project_match = PROJECT_PATTERN.match(heading["title"])
-
-                sections.append(
-                    Document(
-                        page_content=main_section_text,
-                        metadata=clean_metadata(
-                            {
-                                "source": source,
-                                "page": page_at(heading["start"], offsets),
-                                "section_number": heading["number"],
-                                "section_title": heading["title"],
-                                "section_type": (
-                                    "project" if project_match else "portfolio_section"
-                                ),
-                                "project_name": (
-                                    project_match.group(1).strip()
-                                    if project_match
-                                    else None
-                                ),
-                                "retrieval_allowed": True,
-                            }
-                        ),
-                    )
-                )
-
-            # Parse the technology-stack addendum separately.
-            addendum_text = section_text[addendum_position:].strip()
-
-            sections.extend(
-                split_technology_addendum(
-                    addendum_text=addendum_text,
-                    source=source,
-                    page=page_at(
-                        heading["start"] + addendum_position,
-                        offsets,
-                    ),
-                )
-            )
-
-            break
-
-        if is_blocked(section_text):
-            continue
-
-        project_match = PROJECT_PATTERN.match(heading["title"])
-
-        sections.append(
-            Document(
-                page_content=section_text,
-                metadata=clean_metadata(
-                    {
-                        "source": source,
-                        "page": page_at(heading["start"], offsets),
-                        "section_number": heading["number"],
-                        "section_title": heading["title"],
-                        "section_type": (
-                            "project" if project_match else "portfolio_section"
-                        ),
-                        "project_name": (
-                            project_match.group(1).strip()
-                            if project_match
-                            else None
-                        ),
-                        "retrieval_allowed": True,
-                    }
-                ),
-            )
+    if not sections:
+        raise ValueError(
+            "No section headings found. Section headings must be bold and "
+            "larger than body text (see the PDF format guide)."
         )
 
-    return sections
-
-
-def split_documents(documents: list[Document]) -> list[Document]:
-    """
-    PDF pages -> merged text -> numbered sections -> blocked sections removed
-    -> recursive chunks -> section/project context on every chunk.
-    """
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1800,
-        chunk_overlap=250,
-        separators=["\n\n", "\n", ". ", " ", ""],
+        chunk_size=CHUNK_SIZE,
+        chunk_overlap=CHUNK_OVERLAP,
+        separators=["\n\n", ". ", " ", ""],
     )
+
+    def make_chunks(body, header, metadata, start_index):
+        return [
+            Document(
+                page_content=f"{header}\n\n{piece}",
+                metadata=clean_metadata({**metadata, "chunk_index": start_index + i}),
+            )
+            for i, piece in enumerate(splitter.split_text(body))
+        ]
 
     chunks: list[Document] = []
 
-    for section in build_sections(documents):
-        title = section.metadata.get("section_title")
-        project = section.metadata.get("project_name")
-        is_preamble = section.metadata.get("section_type") == "preamble"
+    # Title block before the first section
+    preamble = text[: sections[0].start()].replace(TITLE_MARK + " ", "").strip()
 
-        header_lines = []
-        if title:
-            header_lines.append(f"Section: {title}")
-        if project:
-            header_lines.append(f"Project: {project}")
+    if preamble:
+        chunks.extend(
+            make_chunks(
+                preamble,
+                "Section: Overview",
+                {
+                    "source": source,
+                    "page": offsets[0][1],
+                    "section_title": "Overview",
+                    "section_type": "preamble",
+                    "retrieval_allowed": True,
+                },
+                0,
+            )
+        )
 
-        header = "\n".join(header_lines)
+    for number, match in enumerate(sections, start=1):
+        end = sections[number].start() if number < len(sections) else len(text)
+        section_text = text[match.start():end]
+        info = parse_title(match.group("title"))
 
-        for index, chunk in enumerate(splitter.split_documents([section])):
-            chunk.metadata["chunk_index"] = index
+        base = {
+            "source": source,
+            "section_number": number,
+            "section_title": info["title"],
+            "section_type": "project" if info["project"] else "portfolio_section",
+            "project_name": info["project"],
+            "entity_type": info["entity_type"],
+            "entity_name": info["entity_name"],
+            "retrieval_allowed": True,
+        }
 
-            # Numbered sections start with their own heading, so only later
-            # chunks need the header. Preamble parts have no heading at all.
-            if header and (index > 0 or is_preamble):
-                chunk.page_content = f"{header}\n\n{chunk.page_content}"
+        section_chunks: list[Document] = []
 
-            chunks.append(chunk)
+        for subsection, body, offset in split_subsections(
+            section_text,
+            match.end() - match.start(),
+            info["entity_name"],
+        ):
+            section_chunks.extend(
+                make_chunks(
+                    body,
+                    build_header(info["title"], info["project"], subsection),
+                    {
+                        **base,
+                        "page": page_at(match.start() + offset, offsets),
+                        "subsection": subsection,
+                    },
+                    len(section_chunks),
+                )
+            )
 
+        chunks.extend(section_chunks)
+
+    report(chunks)
     return chunks
