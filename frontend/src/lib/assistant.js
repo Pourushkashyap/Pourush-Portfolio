@@ -1,6 +1,6 @@
 const API_URL = 'https://pourush-portfolio.onrender.com';
 
-export async function askAssistant(question) {
+export async function askAssistant(question, messages = []) {
   const response = await fetch(`${API_URL}/api/chat`, {
     method: 'POST',
     headers: {
@@ -8,7 +8,7 @@ export async function askAssistant(question) {
     },
     body: JSON.stringify({
       query: question,
-      messages: [],
+      messages: messages,
     }),
   });
 
